@@ -7,7 +7,7 @@
 # Main Process
 
 
-| Method overview                                                                                                                                                   |
+| ![Method overview](assets/method.png)                                                                                                                                                   |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Figure 1: Method overview.** Offline EIC calibration identifies environment-stable grounding heads; at inference, a grounding score modulates logit sharpening. |
 
@@ -19,13 +19,13 @@
 ## Visualizations
 
 
-| Main results                                                                     |
+| ![Main results](assets/main_results.png)                                                                     |
 | -------------------------------------------------------------------------------- |
 | **Main results across CHAIR, AMBER, POPE, and MME (LLaVA, Qwen3-VL, InternVL).** |
 
 
 
-| Qualitative comparison                        |
+| ![Qualitative comparison](assets/qualitative.png)                        |
 | --------------------------------------------- |
 | **Qualitative comparison: vanilla vs. Ours.** |
 
