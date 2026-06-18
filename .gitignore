@@ -1,0 +1,21 @@
+__pycache__/
+*.pyc
+*.pt
+*.pth
+*.safetensors
+.env
+.venv/
+.DS_Store
+results/
+slurm/
+slurm-*.out
+*.log
+.idea/
+.vscode/
+
+# Data & model weights (repo-root only; do NOT match transformers/src/.../models/)
+/data/
+/models/
+
+*.jsonl
+chair.pkl

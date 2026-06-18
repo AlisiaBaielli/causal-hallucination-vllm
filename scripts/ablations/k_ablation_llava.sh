@@ -1,0 +1,28 @@
+
+set -euo pipefail
+if [[ -n "${SLURM_SUBMIT_DIR:-}" ]]; then
+  source "${SLURM_SUBMIT_DIR}/scripts/_env.sh"
+else
+  source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/_env.sh"
+fi
+setup_cluster
+
+SCORES="${SCORES:?Set SCORES=path/to/zscore.pt}"
+TAG="${OUT_TAG:-$(basename "${SCORES}" .pt)}"
+OUT="${OUT_ROOT}/k_ablation/llava_${TAG}"
+mkdir -p "${OUT}"
+
+python experiments/chair/llava.py \
+    --seed 3407 \
+    --model_path "${MODEL_LLAVA}" \
+    --data_path "${COCO_DIR}/val2014" \
+    --anno_path "${COCO_DIR}/annotations/instances_val2014.json" \
+    --out_path "${OUT}" \
+    --c_scores_path "${SCORES}" \
+    --layer_index 1 \
+    --alpha 0.7 \
+    --num_eval_samples 500 \
+    --method_name "chall_${TAG}"
+
+run_chair_metrics "${OUT}/chall_${TAG}.jsonl" "${OUT}/chair_results.json"
+echo "=== LLaVA CHAIR ${TAG} done ==="
