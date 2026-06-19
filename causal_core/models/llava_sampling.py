@@ -4,6 +4,7 @@ Adapted from Wan et al.'s ONLY codebase (https://github.com/zifuwan/ONLY).
 VCD: Leng et al., CVPR 2024 (https://github.com/DAMO-NLP-SG/VCD).
 M3ID: Favero et al., CVPR 2024 (https://arxiv.org/abs/2403.14003).
 """
+import copy
 import warnings
 from typing import List, Optional, Union
 
@@ -30,6 +31,27 @@ except ImportError:
 
     SampleOutput = GenerateDecoderOnlyOutput
     SampleEncoderDecoderOutput = GenerateEncoderDecoderOutput
+
+def _isolated_branch_kwargs(model_kwargs):
+    """Return a copy of ``model_kwargs`` with its own KV cache + cache_position.
+
+    Transformers >=5 pre-instantiates a single ``DynamicCache`` and stores it in
+    ``model_kwargs``. A plain ``dict.copy()`` is shallow, so the contrastive
+    (neg/pos) branch would alias the SAME cache as the main branch: the two
+    forwards then interleave their key/value writes into one cache (it grows by
+    two positions per decode step) and the main branch ends up attending to the
+    contrastive branch's polluted keys, producing degenerate, token-doubling
+    output. Deep-copying the cache here keeps the branches fully independent.
+    """
+    branch = model_kwargs.copy()
+    pkv = model_kwargs.get("past_key_values")
+    if pkv is not None:
+        branch["past_key_values"] = copy.deepcopy(pkv)
+    cache_position = model_kwargs.get("cache_position")
+    if cache_position is not None:
+        branch["cache_position"] = cache_position.clone()
+    return branch
+
 
 def sample(
     self,
@@ -93,8 +115,8 @@ def sample(
 
     this_peer_finished = False
 
-    model_kwargs_pos = model_kwargs.copy()
-    model_kwargs_neg = model_kwargs.copy()
+    model_kwargs_pos = _isolated_branch_kwargs(model_kwargs)
+    model_kwargs_neg = _isolated_branch_kwargs(model_kwargs)
 
     t = 0
     total_overlapping_index_len = []
@@ -329,8 +351,8 @@ def _sample_llava(
         )
 
     this_peer_finished = False
-    model_kwargs_pos = model_kwargs.copy()
-    model_kwargs_neg = model_kwargs.copy()
+    model_kwargs_pos = _isolated_branch_kwargs(model_kwargs)
+    model_kwargs_neg = _isolated_branch_kwargs(model_kwargs)
     t = 0
     total_overlapping_index_len = []
 

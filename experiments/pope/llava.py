@@ -113,8 +113,12 @@ def main():
         raise ValueError(f"--c_scores_path is required for method={method}")
 
     tokenizer = AutoTokenizer.from_pretrained(args.model_path, use_fast=False)
+    # CHALL's grounding monitor needs real attention weights (output_attentions),
+    # which the sdpa kernel returns as None; force eager for chall only.
+    attn_impl = "eager" if method == "chall" else "sdpa"
     model = LlavaLlamaForCausalLM.from_pretrained(
         args.model_path, torch_dtype=torch.float16, device_map="auto",
+        attn_implementation=attn_impl,
     )
     model.eval()
     vision_tower = model.get_vision_tower()

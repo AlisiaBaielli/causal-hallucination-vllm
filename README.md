@@ -7,7 +7,7 @@
 # Main Process
 
 
-| ![Method overview](assets/method.png)                                                                                                                                                   |
+| Method overview                                                                                                                                                   |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Figure 1: Method overview.** Offline EIC calibration identifies environment-stable grounding heads; at inference, a grounding score modulates logit sharpening. |
 
@@ -19,34 +19,31 @@
 ## Visualizations
 
 
-| ![Main results](assets/main_results.png)                                                                     |
+| Main results                                                                     |
 | -------------------------------------------------------------------------------- |
 | **Main results across CHAIR, AMBER, POPE, and MME (LLaVA, Qwen3-VL, InternVL).** |
 
 
 
-| ![Qualitative comparison](assets/qualitative.png)                        |
+| Qualitative comparison                        |
 | --------------------------------------------- |
 | **Qualitative comparison: vanilla vs. Ours.** |
 
 
-## Environment (one env for all models)
-
-All experiments use a single conda env `**chall`** with **transformers ≥ 5.0** (LLaVA, Qwen3-VL, InternVL).
+## Environment 
 
 ```bash
 bash scripts/setup_env.sh          # creates/updates conda env 'chall'
 conda activate chall
-bash scripts/validate/verify_env.sh  # check imports + all eval CLIs
 ```
 
-`scripts/setup_env.sh` installs `requirements.txt`, sets `PYTHONPATH` / `PYTHONSTARTUP` for the patched Qwen3/InternVL model code, and runs verification automatically.
+`scripts/setup_env.sh` installs `requirements.txt` and sets `PYTHONPATH` / `PYTHONSTARTUP` for the patched Qwen3/InternVL model code.
 
 Place model weights under `data/models/`, benchmarks under `data/` (COCO, POPE, AMBER, MME). All run scripts source `scripts/_env.sh` for paths and the active conda env.
 
 ## Calibration
 
-Run once per model (requires GPU):
+Run once per model:
 
 ```bash
 sbatch scripts/calibrate/llava.sh
@@ -56,7 +53,7 @@ sbatch scripts/calibrate/internvl.sh
 
 ## Evaluation
 
-Main table: **3 models × 4 benchmarks × 5 methods** (Vanilla, VCD, M3ID, ONLY, Ours). Submit from the repo root:
+Main table: **3 models × 4 benchmarks × 5 methods** (Vanilla, VCD, M3ID, ONLY, Ours). 
 
 ```bash
 sbatch scripts/eval/llava_chair.sh
@@ -70,13 +67,13 @@ sbatch scripts/reproduce/llava_chair_all.sh
 # SKIP_EXISTING=1 sbatch scripts/reproduce/llava_chair_all.sh
 ```
 
-**Full reproduction (one command per model/benchmark).** `scripts/reproduce/run.sh <model> <benchmark>` runs all methods and prints a summary table; `scripts/reproduce/submit_all.sh` submits the entire grid (hallucination + capability + caption-quality) as SLURM jobs:
+**Reproduction.** `scripts/reproduce/run.sh <model> <benchmark>` runs all methods and prints a summary table; `scripts/reproduce/submit_all.sh` submits the entire grid (hallucination + capability + caption-quality) as SLURM jobs:
 
 ```bash
 bash scripts/reproduce/run.sh llava chair     # or pope / amber / mme / mmvp / mmbench
 bash scripts/reproduce/submit_all.sh          # full thesis grid
 ```
 
-Thesis settings are the defaults: CHAIR 500 images (seed 3407), AMBER all 1,004, POPE COCO random split (3,000 questions), MME total over existence/count/position/color (out of 800). Set `POPE_TYPES="random popular adversarial"` for the full POPE evaluation.
+Settings: CHAIR 500 images (seed 3407), AMBER all 1,004, POPE COCO random split (3,000 questions), MME total over existence/count/position/color (out of 800). Set `POPE_TYPES="random popular adversarial"` for the full POPE evaluation.
 
 CHAIR is scored in-repo (`eval/chair.py`); MME via `eval/mme_score.py`; AMBER uses its official toolkit on generated outputs. Caption quality (METEOR, CLIPScore) runs through `scripts/reproduce/quality.sh`. Ablations and analysis live under `scripts/ablations/` and `experiments/analysis/`.

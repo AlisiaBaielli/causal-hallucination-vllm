@@ -90,14 +90,21 @@ def main():
     np.random.seed(args.seed)
 
     method, needs_scores = resolve_method(args)
-    if args.method_name:
-        method = args.method_name
+    # `method` is the canonical decoding behavior (vanilla/only/only_eic/vcd/m3id/
+    # chall) derived from flags. `--method_name` is only an OUTPUT LABEL (e.g.
+    # "chall_random" for head-selection ablations) and must NOT change behavior.
+    label = args.method_name if args.method_name else method
     if needs_scores and not args.c_scores_path:
         raise ValueError(f"--c_scores_path is required for method={method}")
 
     tokenizer = AutoTokenizer.from_pretrained(args.model_path, use_fast=False)
+    # The CHALL grounding monitor reads per-head attention weights via
+    # output_attentions=True, which the default sdpa kernel silently returns as
+    # None (making the intervention a no-op). Force eager attention for chall.
+    attn_impl = "eager" if method == "chall" else "sdpa"
     model = LlavaLlamaForCausalLM.from_pretrained(
         args.model_path, torch_dtype=torch.float16, device_map="auto",
+        attn_implementation=attn_impl,
     )
     model.eval()
 
@@ -146,8 +153,8 @@ def main():
     random.shuffle(images)
     images = images[: args.num_eval_samples]
 
-    out_file = caption_output_path(args.out_path, method)
-    log.info(f"CHAIR method={method} alpha={args.alpha} n={len(images)} -> {out_file}")
+    out_file = caption_output_path(args.out_path, label)
+    log.info(f"CHAIR method={method} label={label} alpha={args.alpha} n={len(images)} -> {out_file}")
 
     results = []
     for img_info in tqdm(images, total=len(images)):

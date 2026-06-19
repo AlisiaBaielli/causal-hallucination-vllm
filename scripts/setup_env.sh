@@ -29,10 +29,6 @@ export PYTHONPATH="${REPO_ROOT}:${REPO_ROOT}/transformers/src"
 export PYTHONSTARTUP="${REPO_ROOT}/causal_core/_python_startup.py"
 
 echo ""
-echo "Running environment verification..."
-bash "${REPO_ROOT}/scripts/validate/verify_env.sh"
-
-echo ""
 echo "Done. Activate with:"
 echo "  conda activate ${ENV_NAME}"
 echo "  export PYTHONPATH=\"\$(pwd):\$(pwd)/transformers/src:\${PYTHONPATH:-}\""

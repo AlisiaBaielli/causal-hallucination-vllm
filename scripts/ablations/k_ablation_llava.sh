@@ -21,7 +21,7 @@ python experiments/chair/llava.py \
     --c_scores_path "${SCORES}" \
     --layer_index 1 \
     --alpha 0.7 \
-    --num_eval_samples 500 \
+    --num_eval_samples "${NSAMP:-500}" \
     --method_name "chall_${TAG}"
 
 run_chair_metrics "${OUT}/chall_${TAG}.jsonl" "${OUT}/chair_results.json"

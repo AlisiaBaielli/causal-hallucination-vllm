@@ -69,14 +69,11 @@ def main():
     model.eval()
     image_token_id = model.config.image_token_id
 
-    try:
-        model.config._attn_implementation = "eager"
-        if hasattr(model.config, "text_config"):
-            model.config.text_config._attn_implementation = "eager"
-        if hasattr(model.model, "language_model") and hasattr(model.model.language_model, "config"):
-            model.model.language_model.config._attn_implementation = "eager"
-    except Exception:
-        pass
+    # The InternVL grounding monitor reads attention from the KV cache via a
+    # manual Q*K (see CausalMonitorInternVL.install_hook), so it does NOT need
+    # eager attention. Forcing eager here previously caused O(S^2) memory
+    # blow-ups (CUDA OOM) on InternVL's high-resolution dynamic tiling, so we
+    # keep the default memory-efficient sdpa kernel for all methods.
 
     payload = torch.load(args.c_scores_path, map_location="cpu")
     if isinstance(payload, dict):

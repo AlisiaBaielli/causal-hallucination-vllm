@@ -21,7 +21,7 @@ case $SLURM_ARRAY_TASK_ID in
     --pope_file "${POPE_DIR}/coco_pope_popular.json" \
     --scores_path "${SCORES}" \
     --enhance_layer_index 1 \
-    --n_generative 200 --n_yesno 200 \
+    --n_generative "${NGEN:-200}" --n_yesno "${NYESNO:-200}" \
     --output_dir "${OUT}"
   ;;
 1)
@@ -33,7 +33,7 @@ case $SLURM_ARRAY_TASK_ID in
     --pope_file "${POPE_DIR}/coco_pope_popular.json" \
     --scores_path "${SCORES}" \
     --enhance_layer_index 0 \
-    --n_generative 200 --n_yesno 200 \
+    --n_generative "${NGEN:-200}" --n_yesno "${NYESNO:-200}" \
     --output_dir "${OUT}"
   ;;
 2)
@@ -45,7 +45,7 @@ case $SLURM_ARRAY_TASK_ID in
     --pope_file "${POPE_DIR}/coco_pope_popular.json" \
     --scores_path "${SCORES}" \
     --enhance_layer_index 1 \
-    --n_generative 200 --n_yesno 200 \
+    --n_generative "${NGEN:-200}" --n_yesno "${NYESNO:-200}" \
     --output_dir "${OUT}"
   ;;
 esac

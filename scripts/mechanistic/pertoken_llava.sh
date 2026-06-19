@@ -19,7 +19,7 @@ python experiments/pertoken_analysis.py \
   --c_scores_path "${SCORES}" \
   --layer_index 1 \
   --alpha 0.7 \
-  --num_eval_samples 500 \
+  --num_eval_samples "${NSAMP:-500}" \
   --out_path "${OUT}"
 
 echo "=== Pertoken GS analysis done ==="

@@ -86,16 +86,19 @@ def main():
     np.random.seed(args.seed)
 
     method, needs_scores = resolve_method(args)
-    if args.method_name:
-        method = args.method_name
+    # `--method_name` is an output label only (the answer path is explicit via
+    # --answers_file); decoding behavior must key off the canonical `method`.
     if needs_scores and not args.c_scores_path:
         raise ValueError(f"--c_scores_path is required for method={method}")
 
     disable_torch_init()
     model_path = os.path.expanduser(args.model_path)
     model_name = get_model_name_from_path(model_path)
+    # CHALL's grounding monitor needs real attention weights (output_attentions),
+    # which the sdpa kernel returns as None; force eager for chall only.
     tokenizer, model, image_processor, _context_len = load_pretrained_model(
         model_path, None, model_name,
+        attn_implementation=("eager" if method == "chall" else None),
     )
 
     monitor = None

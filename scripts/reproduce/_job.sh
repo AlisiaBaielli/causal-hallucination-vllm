@@ -7,7 +7,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --time=10:00:00
-#SBATCH --chdir=/home/abaielli/causal-hallucination-vlm
+# Working dir defaults to the SLURM submission directory; submit from the repo root.
 #SBATCH --output=slurm/%x_%j.out
 #SBATCH --error=slurm/%x_%j.err
 

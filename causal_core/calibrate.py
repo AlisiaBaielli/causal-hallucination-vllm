@@ -387,9 +387,6 @@ def main():
     torch.save(payload, args.out)
     print(f"Saved C-scores to {args.out}")
 
-if __name__ == "__main__":
-    main()
-
 def _internvl_main(args=None):
     if args is None:
         ap = argparse.ArgumentParser()
@@ -603,4 +600,8 @@ def _internvl_main(args=None):
 
     torch.save(payload, args.out)
     print(f"Saved C-scores to {args.out} (chosen_layer={int(chosen_layer)})")
+
+
+if __name__ == "__main__":
+    main()
 

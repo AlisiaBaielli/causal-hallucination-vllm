@@ -21,7 +21,7 @@ python experiments/perhead_entropy.py \
   --anno_path "${COCO_DIR}/annotations/instances_val2014.json" \
   --c_scores_path "${SCORES}" \
   --out_path "${OUT}" \
-  --num_eval_samples 2000 \
+  --num_eval_samples "${NSAMP:-2000}" \
   --max_new_tokens 128 \
   --layer_index "${LAYER}" \
   --img_start 35 \

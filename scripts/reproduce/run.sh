@@ -42,10 +42,14 @@ if [[ ! -f "${SCORES}" ]]; then
   exit 1
 fi
 
-# Decode-time method set
-METHODS=(vanilla vcd m3id only)
-[[ "${HAS_EIC}" == "1" ]] && METHODS+=(only_eic)
-METHODS+=(chall)
+# Decode-time method set (override with e.g. METHODS="vanilla chall")
+if [[ -n "${METHODS:-}" ]]; then
+  read -r -a METHODS <<< "${METHODS}"
+else
+  METHODS=(vanilla vcd m3id only)
+  [[ "${HAS_EIC}" == "1" ]] && METHODS+=(only_eic)
+  METHODS+=(chall)
+fi
 
 # Flags that select the decoding method in the benchmark scripts.
 # --c_scores_path is required by the Qwen3/InternVL scripts, so we always pass it

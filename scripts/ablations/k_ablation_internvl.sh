@@ -29,18 +29,24 @@ RAW="${SCORES_ROOT}/internvl_raw_K${K}.pt"
 ZSCORE="${SCORES_ROOT}/internvl_eic_K${K}.pt"
 ALPHA=0.7
 
-python -m causal_core.calibrate \
-  --model_name "${MODEL_INTERNVL}" \
-  --model_type internvl \
-  --n_samples 8000 \
-  --all_layers \
-  --envs "${ENVS[@]}" \
-  --question_file "${CALIB_JSONL}" \
-  --image_folder "${COCO_DIR}/val2014" \
-  --variance_mode env_per_example \
-  --out "${RAW}"
+# Set SKIP_CALIB=1 to reuse an existing ${ZSCORE} (e.g. for cheap re-runs of the
+# downstream CHAIR eval without re-paying the calibration cost).
+if [[ "${SKIP_CALIB:-0}" == "1" && -f "${ZSCORE}" ]]; then
+  echo "Reusing existing calibration scores: ${ZSCORE}"
+else
+  python -m causal_core.calibrate \
+    --model_name "${MODEL_INTERNVL}" \
+    --model_type internvl \
+    --n_samples "${NSAMP:-8000}" \
+    --all_layers \
+    --envs "${ENVS[@]}" \
+    --question_file "${CALIB_JSONL}" \
+    --image_folder "${COCO_DIR}/val2014" \
+    --variance_mode env_per_example \
+    --out "${RAW}"
 
-python -m causal_core.apply_zscore_filter --input "${RAW}" --output "${ZSCORE}"
+  python -m causal_core.apply_zscore_filter --input "${RAW}" --output "${ZSCORE}"
+fi
 
 OUT="${OUT_ROOT}/k_ablation/internvl_K${K}"
 mkdir -p "${OUT}"
@@ -54,7 +60,7 @@ python experiments/chair/internvl.py \
   --c_scores_path "${ZSCORE}" \
   --layer_index 1 \
   --alpha "${ALPHA}" \
-  --num_eval_samples 500 \
+  --num_eval_samples "${NCHAIR:-500}" \
   --method_name "chall_K${K}"
 
 CAP="$(chall_caption_path "${OUT}" "${ALPHA}" "chall_K${K}")"

@@ -81,14 +81,18 @@ def main():
     np.random.seed(args.seed)
 
     method, needs_scores = resolve_method(args)
-    if args.method_name:
-        method = args.method_name
+    # `--method_name` is an output label only (the answer path is explicit via
+    # --output_file); decoding behavior must key off the canonical `method`.
     if needs_scores and not args.c_scores_path:
         raise ValueError(f"--c_scores_path is required for method={method}")
 
     tokenizer = AutoTokenizer.from_pretrained(args.model_path, use_fast=False)
+    # CHALL's grounding monitor needs real attention weights (output_attentions),
+    # which the sdpa kernel returns as None; force eager for chall only.
+    attn_impl = "eager" if method == "chall" else "sdpa"
     model = LlavaLlamaForCausalLM.from_pretrained(
         args.model_path, torch_dtype=torch.float16, device_map="auto",
+        attn_implementation=attn_impl,
     )
     model.eval()
 

@@ -20,8 +20,9 @@ for SCRIPT in tver_head_select_chair tver_signal_chair; do
       --layer_index 1 \
       --alpha 0.7 \
       --out_path "${OUT}/${SCRIPT}" \
-      --num_eval_samples 500
-  run_chair_metrics "${OUT}/${SCRIPT}/${SCRIPT%.py}.jsonl" "${OUT}/${SCRIPT}_results.json"
+      --method_name "${SCRIPT}" \
+      --num_eval_samples "${NSAMP:-500}"
+  run_chair_metrics "${OUT}/${SCRIPT}/${SCRIPT}.jsonl" "${OUT}/${SCRIPT}_results.json"
 done
 
 echo "=== TVER ablation done ==="

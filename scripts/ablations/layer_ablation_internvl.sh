@@ -22,7 +22,7 @@ python experiments/chair/internvl.py \
   --c_scores_path "${SCORES}" \
   --layer_index "${LAYER}" \
   --alpha "${ALPHA}" \
-  --num_eval_samples 500 \
+  --num_eval_samples "${NSAMP:-500}" \
   --method_name "chall_L${LAYER}"
 
 CAP="$(chall_caption_path "${OUT}" "${ALPHA}" "chall_L${LAYER}")"
