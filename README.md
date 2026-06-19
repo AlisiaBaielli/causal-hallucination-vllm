@@ -74,6 +74,4 @@ bash scripts/reproduce/run.sh llava chair     # or pope / amber / mme / mmvp / m
 bash scripts/reproduce/submit_all.sh          # full thesis grid
 ```
 
-Settings: CHAIR 500 images (seed 3407), AMBER all 1,004, POPE COCO random split (3,000 questions), MME total over existence/count/position/color (out of 800). Set `POPE_TYPES="random popular adversarial"` for the full POPE evaluation.
-
-CHAIR is scored in-repo (`eval/chair.py`); MME via `eval/mme_score.py`; AMBER uses its official toolkit on generated outputs. Caption quality (METEOR, CLIPScore) runs through `scripts/reproduce/quality.sh`. Ablations and analysis live under `scripts/ablations/` and `experiments/analysis/`.
+Default settings (seeds, sample counts, POPE split) live in `scripts/reproduce/run.sh`; `run.sh` prints a summary table after each run.
