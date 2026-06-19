@@ -7,9 +7,9 @@
 # Main Process
 
 
-| Method overview                                                                                                                                                   |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Figure 1: Method overview.** Offline EIC calibration identifies environment-stable grounding heads; at inference, a grounding score modulates logit sharpening. |
+![Method overview](assets/method.png)
+
+**Figure 1: Method overview.** Offline EIC calibration identifies environment-stable grounding heads; at inference, a grounding score modulates logit sharpening.
 
 
 **Offline (once per model):** build K=7 pseudo-environments, compute per-head TVER, filter text-heavy heads, derive EIC scores, and select the intervention layer. Saved to `scores/*_eic.pt`.
@@ -19,15 +19,15 @@
 ## Visualizations
 
 
-| Main results                                                                     |
-| -------------------------------------------------------------------------------- |
-| **Main results across CHAIR, AMBER, POPE, and MME (LLaVA, Qwen3-VL, InternVL).** |
+![Main results](assets/main_results.png)
+
+**Main results across CHAIR, AMBER, POPE, and MME (LLaVA, Qwen3-VL, InternVL).**
 
 
 
-| Qualitative comparison                        |
-| --------------------------------------------- |
-| **Qualitative comparison: vanilla vs. Ours.** |
+![Qualitative comparison](assets/qualitative.png)
+
+**Qualitative comparison: vanilla vs. Ours.**
 
 
 ## Environment 
